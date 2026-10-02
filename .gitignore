@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+backend/.venv/
+backend/*.db
+backend/ctf.db
+.pytest_cache/
+
+# Server-side secrets (generated flags). NEVER commit these.
+backend/.secrets/
+
+# Node / Next.js
+node_modules/
+frontend/.next/
+frontend/out/
+frontend/next-env.d.ts
+
+# Env
+.env
+*.local
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/

@@ -1,0 +1,24 @@
+"""Challenge registry (plan Phase 2).
+
+A single place that lists the challenges the platform knows about. Adding a new
+challenge later is a matter of importing it and adding it here — the generic
+platform never needs to understand a challenge's internals.
+"""
+
+from __future__ import annotations
+
+from ..challenges.base import Challenge
+from ..challenges.model_mirror import SLUG as MODEL_MIRROR_SLUG
+from ..challenges.model_mirror import challenge as model_mirror
+
+_REGISTRY: dict[str, Challenge] = {
+    MODEL_MIRROR_SLUG: model_mirror,
+}
+
+
+def all_challenges() -> list[Challenge]:
+    return list(_REGISTRY.values())
+
+
+def get_challenge(slug: str) -> Challenge | None:
+    return _REGISTRY.get(slug)

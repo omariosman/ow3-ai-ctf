@@ -1,0 +1,64 @@
+# Architecture
+
+A local-first AI Security CTF platform. Two services, one database.
+
+```
+┌─────────────────────┐        ┌─────────────────────┐
+│   Browser UI        │  HTTP  │   CTF Backend       │
+│   (Next.js)         │ ─────▶ │   (FastAPI)         │
+│                     │        │                     │
+│ Home / Challenges   │        │ Challenge API       │
+│ Challenge page      │        │ Submission/Solve    │
+│ API console         │        │ Flag validator      │
+│ Flag submission     │        │ ┌─────────────────┐ │
+└─────────────────────┘        │ │ Model Mirror    │ │
+                               │ │ hidden model +  │ │
+                               │ │ predict oracle  │ │
+                               │ └─────────────────┘ │
+                               │        │            │
+                               │        ▼            │
+                               │   SQLite (ORM)      │
+                               └─────────────────────┘
+```
+
+## Components
+
+### Frontend (`frontend/`)
+Next.js App Router + TypeScript + Tailwind. All pages are client components that
+call the backend via `lib/api.ts`. The browser owns a local `player_id`
+(localStorage) — no auth for the MVP.
+
+### Backend (`backend/app/`)
+FastAPI application.
+
+- `main.py` — app factory, CORS, body-size limit, safe error handler, docs
+  disabled outside development.
+- `config.py` — env-driven settings (prefix `CTF_`).
+- `database.py` / `models/` — SQLAlchemy ORM (parameterized queries only).
+- `schemas/` — Pydantic request/response validation.
+- `routes/challenges.py` — generic list / detail / submit.
+- `routes/predict.py` — Model Mirror's inference oracle.
+- `services/` — registry, seeding, flag generation, flag store, progress.
+- `challenges/` — isolated per-challenge code (base class + `model_mirror/`).
+
+### Data model (`models/__init__.py`)
+`Challenge`, `Player`, `Submission`, `Solve` (unique per player+challenge), and
+`ChallengeProgress` (the deterministic "unlocked" bridge between meeting the
+in-challenge condition and retrieving the flag).
+
+## Flag lifecycle (deterministic solve → explicit submit)
+
+1. Player probes `POST /.../predict` and reaches the solve band.
+2. Backend marks `ChallengeProgress.unlocked` and returns the flag in that
+   response.
+3. Player submits the flag via `POST /.../submit`.
+4. Backend verifies against the stored **SHA-256** and records a `Solve`.
+
+The plaintext flag lives only in the server-side flag store (`backend/.secrets/`,
+or `/data/.secrets` in Docker) — never in Git, the DB, metadata, or the frontend.
+
+## Security posture
+
+ORM-only queries · server-side flag validation · no secrets in frontend/Git ·
+env-based config · request size limits · basic rate limiting · structured logs ·
+safe error messages · Pydantic validation · explicit CORS. See plan section 23.

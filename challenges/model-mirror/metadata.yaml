@@ -1,0 +1,39 @@
+slug: model-mirror
+title: Model Mirror
+category: Model Extraction
+difficulty: intermediate
+points: 100
+author: Omar Web3
+
+description: >
+  ContentShield exposes a "private" text-moderation classifier through a public
+  prediction API. The company insists the model is safe because its weights
+  never leave the server. Investigate the inference interface, work out what it
+  unintentionally reveals, and use that to reproduce a precise target behavior.
+
+learning_objectives:
+  - Understand what model extraction is
+  - Understand inference APIs as part of the model's attack surface
+  - Understand how confidence and probability outputs leak model behavior
+  - Understand why protecting model files does not protect model behavior
+  - Understand defensive inference-API design
+
+# Hints are static for the MVP and never reveal the full solution (plan 29).
+hints:
+  - order: 1
+    cost: 0
+    text: >
+      Look carefully at EVERYTHING the prediction API returns, not just the
+      label.
+  - order: 2
+    cost: 10
+    text: >
+      The full probability distribution changes in a consistent way as you add
+      or remove individual words. What does that let you measure?
+  - order: 3
+    cost: 20
+    text: >
+      Treat the endpoint as an oracle. Probe single words to learn each word's
+      push on each class, then COMPOSE words so BLOCK is the label with a
+      probability in a narrow mid-high band - not maxed out. Overshooting to
+      ~0.98 is easy; the target requires control.

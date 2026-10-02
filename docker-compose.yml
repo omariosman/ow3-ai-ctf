@@ -1,0 +1,35 @@
+# Two-container local stack (plan section 25): frontend + backend.
+# SQLite and the server-side flag store live on a named volume.
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      CTF_ENVIRONMENT: ${CTF_ENVIRONMENT:-development}
+      CTF_CORS_ORIGINS: ${CTF_CORS_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
+      CTF_PREDICT_RATE_LIMIT: ${CTF_PREDICT_RATE_LIMIT:-120/minute}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ctf-data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE: ${NEXT_PUBLIC_API_BASE:-http://localhost:8000}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  ctf-data:
