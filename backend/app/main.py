@@ -22,6 +22,7 @@ from .database import init_db
 from .logging_config import configure_logging
 from .routes import challenges as challenges_routes
 from .routes import predict as predict_routes
+from .routes import release_roulette as release_roulette_routes
 
 configure_logging()
 logger = logging.getLogger("ctf")
@@ -74,6 +75,7 @@ def create_app() -> FastAPI:
 
     app.include_router(challenges_routes.router)
     app.include_router(predict_routes.router)
+    app.include_router(release_roulette_routes.router)
 
     @app.get("/api/health", tags=["meta"])
     def health() -> dict[str, str]:

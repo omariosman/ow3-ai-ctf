@@ -14,6 +14,10 @@ A local-first AI Security CTF platform. Two services, one database.
 └─────────────────────┘        │ │ Model Mirror    │ │
                                │ │ hidden model +  │ │
                                │ │ predict oracle  │ │
+                               │ ├─────────────────┤ │
+                               │ │ Release Roulette│ │
+                               │ │ ReleaseBot agent│ │
+                               │ │ + deploy tools  │ │
                                │ └─────────────────┘ │
                                │        │            │
                                │        ▼            │
@@ -38,17 +42,23 @@ FastAPI application.
 - `schemas/` — Pydantic request/response validation.
 - `routes/challenges.py` — generic list / detail / submit.
 - `routes/predict.py` — Model Mirror's inference oracle.
+- `routes/release_roulette.py` — Release Roulette chat / state / reset.
 - `services/` — registry, seeding, flag generation, flag store, progress.
-- `challenges/` — isolated per-challenge code (base class + `model_mirror/`).
+- `challenges/` — isolated per-challenge code (base class + `model_mirror/`,
+  `release_roulette/`).
 
 ### Data model (`models/__init__.py`)
 `Challenge`, `Player`, `Submission`, `Solve` (unique per player+challenge), and
 `ChallengeProgress` (the deterministic "unlocked" bridge between meeting the
-in-challenge condition and retrieving the flag).
+in-challenge condition and retrieving the flag). Release Roulette adds two
+challenge-specific tables, `release_roulette_releases` and
+`release_roulette_audit`, both scoped by `player_id`.
 
 ## Flag lifecycle (deterministic solve → explicit submit)
 
-1. Player probes `POST /.../predict` and reaches the solve band.
+1. Player probes `POST /.../predict` and reaches the solve band (or, for
+   Release Roulette, a chat turn leaves the protected release ROLLED_BACK by
+   ReleaseBot).
 2. Backend marks `ChallengeProgress.unlocked` and returns the flag in that
    response.
 3. Player submits the flag via `POST /.../submit`.

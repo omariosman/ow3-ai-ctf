@@ -30,11 +30,13 @@ def _ensure_default_player(session: Session) -> None:
         )
 
 
-def _ensure_flag(session: Session, slug: str, row: ChallengeRow) -> None:
+def _ensure_flag(
+    session: Session, slug: str, row: ChallengeRow, prefix: str | None = None
+) -> None:
     """Make sure a plaintext flag + matching hash exist for the challenge."""
     plaintext = flag_store.load_flag(slug)
     if plaintext is None:
-        plaintext = flags.generate_flag()
+        plaintext = flags.generate_flag(prefix or flags.FLAG_PREFIX)
         flag_store.store_flag(slug, plaintext)
     row.flag_hash = flags.hash_flag(plaintext)
 
@@ -58,4 +60,4 @@ def seed_all(session: Session) -> None:
         row.points = meta.points
         row.author = meta.author
         row.is_active = True
-        _ensure_flag(session, meta.slug, row)
+        _ensure_flag(session, meta.slug, row, challenge.flag_prefix)

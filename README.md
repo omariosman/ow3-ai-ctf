@@ -4,8 +4,12 @@ A **local-first** AI Security CTF platform. Learn AI security by breaking
 vulnerable systems. Each challenge targets an *architectural* weakness and is
 solved by a **deterministic condition checked in code** — never by an LLM.
 
-First challenge: **Model Mirror** — model extraction through an over-informative
-prediction API (category: Model Extraction / Interface Security).
+Challenges:
+
+- **Model Mirror**: model extraction through an over-informative prediction
+  API (category: Model Extraction / Interface Security, 100 pts).
+- **Release Roulette**: an AI release agent wired to an over-powered deployment
+  tool (OWASP LLM06:2025 Excessive Agency, 150 pts).
 
 - Frontend: Next.js + TypeScript + Tailwind
 - Backend: Python + FastAPI
@@ -92,7 +96,8 @@ python -m pytest
 ```
 
 Covers platform behavior, the Model Mirror challenge (determinism, solve band,
-shortcut rejection), and security (flag never leaks, injection-safe, oversized
+shortcut rejection), the Release Roulette challenge (tools, agent, validator,
+isolation, no command execution), and security (flag never leaks, injection-safe, oversized
 bodies rejected, docs disabled in production).
 
 ## How to play Model Mirror
@@ -107,6 +112,23 @@ bodies rejected, docs disabled in production).
 
 See `challenges/model-mirror/README.md` for the player write-up. The author-only
 `solution.md` is never served by the web app.
+
+## How to play Release Roulette
+
+1. Open the challenge and read the scenario: ReleaseBot is meant to inspect,
+   summarize, and stage releases.
+2. Chat with ReleaseBot. Watch the **Tool Activity** and **Aurora Release**
+   panels.
+3. Work out what the agent can actually reach, and compare that with what its
+   job requires.
+4. When the protected release changes state through ReleaseBot, the chat
+   response reveals your flag. Submit it for 150 points.
+5. **Reset environment** restores Aurora; your recorded solve is kept.
+
+The agent is a deterministic local simulator. It needs no API key and no
+internet (`RELEASE_ROULETTE_LLM_PROVIDER=mock`). See
+`challenges/release-roulette/README.md`. The author-only `solution.md` covers
+the problem statement, solution, remediation, and learning outcomes.
 
 ## Project layout
 

@@ -48,7 +48,9 @@ persist only the SHA-256 hash.
 
 ## 5. Rules
 
-- Flag format `OWASP{...}`, generated at init, stored as SHA-256 only.
+- Flag format `OWASP{...}`, generated at init, stored as SHA-256 only. Set
+  `flag_prefix` on your `Challenge` subclass (e.g. `"OWASP{release_"`) to choose
+  a tag; the default is `OWASP{mirror_`.
 - Solve condition decided by **code**, never by an LLM, never by inspecting
   natural language.
 - Never put the flag in frontend, metadata, DB rows, or player-exposed env vars.

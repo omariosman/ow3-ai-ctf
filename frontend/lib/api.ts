@@ -117,3 +117,94 @@ export async function submitFlag(
   });
   return handle<SubmitResponse>(res);
 }
+
+// ---- Release Roulette ----
+
+export interface ReleaseView {
+  release_id: string;
+  project: string;
+  version: string;
+  environment: string;
+  status: string;
+  protected: boolean;
+  last_actor: string | null;
+}
+
+export interface AuditEvent {
+  request_id: string;
+  tool: string;
+  release_id: string | null;
+  actor: string;
+  ok: boolean;
+  transition: string | null;
+  timestamp: string;
+}
+
+export interface ToolCall {
+  tool: string;
+  release_id: string | null;
+  ok: boolean;
+  transition: string | null;
+}
+
+export interface SecurityAnalysis {
+  owasp: string;
+  root_cause: string;
+  what_happened: string[];
+  broken: string;
+  secure: string;
+}
+
+export interface ReleaseRouletteState {
+  status: string;
+  target_release: string;
+  releases: ReleaseView[];
+  audit: AuditEvent[];
+  challenge_solved: boolean;
+  analysis: SecurityAnalysis | null;
+}
+
+export interface ReleaseRouletteChatResponse {
+  request_id: string;
+  reply: string;
+  tool_calls: ToolCall[];
+  state: ReleaseRouletteState;
+  solved_condition: boolean;
+  flag: string | null;
+  note: string | null;
+}
+
+const RR_BASE = `${API_BASE}/api/challenges/release-roulette`;
+
+export async function releaseRouletteState(
+  playerId: string
+): Promise<ReleaseRouletteState> {
+  const res = await fetch(
+    `${RR_BASE}/state?player_id=${encodeURIComponent(playerId)}`,
+    { cache: "no-store" }
+  );
+  return handle<ReleaseRouletteState>(res);
+}
+
+export async function releaseRouletteChat(
+  message: string,
+  playerId: string
+): Promise<ReleaseRouletteChatResponse> {
+  const res = await fetch(`${RR_BASE}/chat`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message, player_id: playerId }),
+  });
+  return handle<ReleaseRouletteChatResponse>(res);
+}
+
+export async function releaseRouletteReset(
+  playerId: string
+): Promise<ReleaseRouletteState> {
+  const res = await fetch(`${RR_BASE}/reset`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ player_id: playerId }),
+  });
+  return handle<ReleaseRouletteState>(res);
+}

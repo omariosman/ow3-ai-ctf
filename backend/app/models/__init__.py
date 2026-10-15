@@ -103,3 +103,52 @@ class ChallengeProgress(Base):
     challenge_id: Mapped[int] = mapped_column(ForeignKey("challenges.id"), index=True)
     unlocked: Mapped[bool] = mapped_column(Boolean, default=False)
     unlocked_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+
+
+# ---------------------------------------------------------------------------
+# Release Roulette (challenge-specific, additive tables).
+#
+# The simulated deployment database for the Release Roulette challenge. Scoped
+# by player so every player gets an isolated copy of Project Aurora. Nothing
+# here ever touches real infrastructure.
+# ---------------------------------------------------------------------------
+
+
+class ReleaseRouletteRelease(Base):
+    __tablename__ = "release_roulette_releases"
+    __table_args__ = (
+        UniqueConstraint("player_id", "release_id", name="uq_rr_player_release"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    player_id: Mapped[str] = mapped_column(String(80), index=True)
+    release_id: Mapped[str] = mapped_column(String(80))
+    project: Mapped[str] = mapped_column(String(80))
+    version: Mapped[str] = mapped_column(String(40))
+    environment: Mapped[str] = mapped_column(String(40))
+    status: Mapped[str] = mapped_column(String(40))
+    protected: Mapped[bool] = mapped_column(Boolean, default=False)
+    # Who performed the last high-impact transition, and why. Recorded by the
+    # deployment adapter but never checked by it (that is the flaw).
+    last_actor: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    rollback_reason: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=_utcnow, onupdate=_utcnow
+    )
+
+
+class ReleaseRouletteAudit(Base):
+    """One row per tool invocation made through the deployment adapter."""
+
+    __tablename__ = "release_roulette_audit"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    player_id: Mapped[str] = mapped_column(String(80), index=True)
+    request_id: Mapped[str] = mapped_column(String(40))
+    tool: Mapped[str] = mapped_column(String(40))
+    release_id: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    actor: Mapped[str] = mapped_column(String(80))
+    ok: Mapped[bool] = mapped_column(Boolean, default=True)
+    transition: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow)
