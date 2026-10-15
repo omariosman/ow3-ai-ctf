@@ -35,6 +35,9 @@ class Challenge:
     """Base class for a registered challenge."""
 
     meta: ChallengeMeta
+    # Optional flag prefix such as "OWASP{release_". None keeps the platform
+    # default (see services/flags.py).
+    flag_prefix: str | None = None
 
     def get_public_metadata(self) -> ChallengeMeta:
         """Public, secret-free metadata shown to players."""

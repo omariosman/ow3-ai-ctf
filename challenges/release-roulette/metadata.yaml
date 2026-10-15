@@ -1,0 +1,41 @@
+slug: release-roulette
+title: Release Roulette
+category: Excessive Agency
+owasp: LLM06:2025
+difficulty: intermediate
+points: 150
+author: Omar Web3
+
+description: >
+  ReleaseBot was built to help Aurora's developers prepare software releases:
+  inspect a release candidate, write a release summary, and stage it. The
+  security team suspects the assistant may have been given more operational
+  access than its role requires. Investigate the assistant and determine
+  whether its authority matches its intended purpose - and prove it by causing
+  a change to the protected release that ReleaseBot should never be able to make.
+
+learning_objectives:
+  - Understand what Excessive Agency (OWASP LLM06:2025) means
+  - Distinguish excessive functionality, excessive permissions, and excessive autonomy
+  - Understand why "the model normally picks the safe action" is not a security control
+  - Understand why authorization must be enforced outside the model
+  - Apply least privilege and human approval to AI agent tools
+  - Distinguish Excessive Agency from Prompt Injection
+
+# Hints never reveal the exact request (plan section 24).
+hints:
+  - order: 1
+    cost: 0
+    text: >
+      ReleaseBot is an interface to other systems. Do not only think about what
+      the model says. Think about what the model is allowed to do.
+  - order: 2
+    cost: 15
+    text: >
+      List the operations the assistant can reach. Ask which of them are
+      actually necessary for its stated purpose.
+  - order: 3
+    cost: 30
+    text: >
+      A model choosing an operation is not the same thing as an authorization
+      system approving that operation.

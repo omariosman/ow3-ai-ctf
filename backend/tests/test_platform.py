@@ -14,11 +14,10 @@ def test_health(client):
 def test_challenge_listing(client):
     r = client.get("/api/challenges")
     assert r.status_code == 200
-    data = r.json()
-    assert len(data) == 1
-    assert data[0]["slug"] == "model-mirror"
-    assert data[0]["points"] == 100
-    assert data[0]["solved"] is False
+    data = {c["slug"]: c for c in r.json()}
+    assert "model-mirror" in data
+    assert data["model-mirror"]["points"] == 100
+    assert data["model-mirror"]["solved"] is False
 
 
 def test_challenge_lookup(client):

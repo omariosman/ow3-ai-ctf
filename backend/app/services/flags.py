@@ -1,6 +1,6 @@
 """Flag generation and verification (plan sections 15 & 20).
 
-Flags follow the format OWASP{mirror_<random_suffix>}. Only the SHA-256 hash is
+Flags follow the format OWASP{<tag>_<random_suffix>} (default tag: mirror). Only the SHA-256 hash is
 persisted; the plaintext is generated once at seed time, handed to the backend
 in-process, and never written to the database, metadata, or frontend.
 """
@@ -15,10 +15,14 @@ FLAG_PREFIX = "OWASP{mirror_"
 FLAG_SUFFIX = "}"
 
 
-def generate_flag() -> str:
-    """Create a fresh, random-looking flag for a challenge instance."""
+def generate_flag(prefix: str = FLAG_PREFIX) -> str:
+    """Create a fresh, random-looking flag for a challenge instance.
+
+    ``prefix`` lets a challenge pick its own tag (e.g. ``OWASP{release_``); the
+    default keeps Model Mirror's original ``OWASP{mirror_`` format.
+    """
     suffix = secrets.token_hex(8)
-    return f"{FLAG_PREFIX}{suffix}{FLAG_SUFFIX}"
+    return f"{prefix}{suffix}{FLAG_SUFFIX}"
 
 
 def hash_flag(flag: str) -> str:

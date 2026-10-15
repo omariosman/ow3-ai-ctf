@@ -43,6 +43,10 @@ def _reset_state() -> None:
     predict_routes._request_counts.clear()
     predict_routes._rate_limiter.reset()
 
+    from app.routes import release_roulette as release_roulette_routes
+
+    release_roulette_routes._rate_limiter.reset()
+
 
 @pytest.fixture()
 def client():

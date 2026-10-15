@@ -58,4 +58,71 @@ class PredictResponse(BaseModel):
     note: str | None = None
 
 
+# ---- Release Roulette ----
+
+
+class ReleaseRouletteChatRequest(BaseModel):
+    player_id: str = Field(default="local-player", max_length=80)
+    message: str = Field(min_length=0, max_length=1000)
+
+
+class ReleaseRoulettePlayerRequest(BaseModel):
+    player_id: str = Field(default="local-player", max_length=80)
+
+
+class ReleaseView(BaseModel):
+    release_id: str
+    project: str
+    version: str
+    environment: str
+    status: str
+    protected: bool
+    last_actor: str | None = None
+
+
+class AuditEvent(BaseModel):
+    request_id: str
+    tool: str
+    release_id: str | None = None
+    actor: str
+    ok: bool
+    transition: str | None = None
+    timestamp: str
+
+
+class ToolCall(BaseModel):
+    tool: str
+    release_id: str | None = None
+    ok: bool
+    transition: str | None = None
+
+
+class SecurityAnalysis(BaseModel):
+    owasp: str
+    root_cause: str
+    what_happened: list[str]
+    broken: str
+    secure: str
+
+
+class ReleaseRouletteState(BaseModel):
+    status: str  # "active" | "solved"
+    target_release: str
+    releases: list[ReleaseView]
+    audit: list[AuditEvent]
+    challenge_solved: bool
+    # Present only once the player has met the solve condition.
+    analysis: SecurityAnalysis | None = None
+
+
+class ReleaseRouletteChatResponse(BaseModel):
+    request_id: str
+    reply: str
+    tool_calls: list[ToolCall]
+    state: ReleaseRouletteState
+    solved_condition: bool = False
+    flag: str | None = None
+    note: str | None = None
+
+
 ChallengeDetail.model_rebuild()
