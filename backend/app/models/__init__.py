@@ -152,3 +152,28 @@ class ReleaseRouletteAudit(Base):
     ok: Mapped[bool] = mapped_column(Boolean, default=True)
     transition: Mapped[str | None] = mapped_column(String(80), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow)
+
+
+# ---------------------------------------------------------------------------
+# RenderTrap (challenge-specific, additive table).
+#
+# One row per player: the last assistant output, the current preview generation
+# and a short-lived nonce used to tie a proof event to that exact preview.
+# ---------------------------------------------------------------------------
+
+
+class RenderTrapSession(Base):
+    __tablename__ = "render_trap_sessions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    player_id: Mapped[str] = mapped_column(String(80), unique=True, index=True)
+    note: Mapped[str] = mapped_column(Text, default="")
+    raw_output: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # Monotonic: bumped on every submit and reset, never reused.
+    generation: Mapped[int] = mapped_column(Integer, default=0)
+    nonce: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    nonce_expires_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    proof_status: Mapped[str] = mapped_column(String(20), default="none")
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=_utcnow, onupdate=_utcnow
+    )

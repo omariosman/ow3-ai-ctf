@@ -10,6 +10,9 @@ Challenges:
   API (category: Model Extraction / Interface Security, 100 pts).
 - **Release Roulette**: an AI release agent wired to an over-powered deployment
   tool (OWASP LLM06:2025 Excessive Agency, 150 pts).
+- **RenderTrap**: an AI ticket summary rendered unsafely in a dashboard preview
+  (OWASP LLM05:2025 Improper Output Handling, 150 pts). The vulnerable sink is
+  confined to a sandboxed iframe.
 
 - Frontend: Next.js + TypeScript + Tailwind
 - Backend: Python + FastAPI
@@ -129,6 +132,19 @@ The agent is a deterministic local simulator. It needs no API key and no
 internet (`RELEASE_ROULETTE_LLM_PROVIDER=mock`). See
 `challenges/release-roulette/README.md`. The author-only `solution.md` covers
 the problem statement, solution, remediation, and learning outcomes.
+
+## How to play RenderTrap
+
+1. Open the challenge and inspect ticket `NST-2048`.
+2. Add a note and generate the summary.
+3. Compare **Raw assistant output** (plain text) with the sandboxed **Preview**.
+4. Cause the harmless marker to run inside the preview. The preview sends a
+   proof event, the backend validates it against your current session, and the
+   response reveals your flag. Submit it for 150 points.
+5. **Reset environment** clears state and invalidates old proofs; your recorded
+   solve is kept.
+
+No API key or internet needed. See `challenges/render-trap/README.md`.
 
 ## Project layout
 
