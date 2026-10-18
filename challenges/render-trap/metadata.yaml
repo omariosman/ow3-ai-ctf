@@ -1,0 +1,36 @@
+slug: render-trap
+title: RenderTrap
+category: Improper Output Handling
+owasp: LLM05:2025
+difficulty: intermediate
+points: 150
+author: Omar Web3
+
+description: >
+  Northstar Support introduced an AI assistant that summarizes customer
+  tickets. The preview sometimes behaves differently from the raw response.
+  Investigate how generated content is handled, demonstrate the issue safely,
+  and recover the challenge flag. All activity is confined to this local
+  training environment.
+
+learning_objectives:
+  - Understand what Improper Output Handling (OWASP LLM05:2025) means
+  - Treat LLM output as untrusted data, even from your own model
+  - Recognise the difference between displaying text and interpreting markup
+  - Apply context-aware output handling (text by default, sanitized rich text if needed)
+  - Distinguish Improper Output Handling from Prompt Injection
+
+hints:
+  - order: 1
+    cost: 0
+    text: >
+      Is the assistant response displayed as text, or interpreted by the browser?
+  - order: 2
+    cost: 15
+    text: >
+      Treat generated output as untrusted, even if it came from your own model.
+  - order: 3
+    cost: 30
+    text: >
+      Compare the raw assistant response with the preview. What changes when
+      markup is interpreted rather than displayed?

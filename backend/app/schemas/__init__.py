@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from typing import Literal
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ChallengeSummary(BaseModel):
@@ -123,6 +125,59 @@ class ReleaseRouletteChatResponse(BaseModel):
     solved_condition: bool = False
     flag: str | None = None
     note: str | None = None
+
+
+# --- RenderTrap ---------------------------------------------------------
+
+
+class RenderTrapSubmitRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    player_id: str = Field(default="local-player", max_length=80)
+    note: str = Field(default="", max_length=1000)
+
+
+class RenderTrapPlayerRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    player_id: str = Field(default="local-player", max_length=80)
+
+
+class RenderTrapProofRequest(BaseModel):
+    """Strict schema for the one proof event the preview may emit."""
+
+    model_config = ConfigDict(extra="forbid")
+    player_id: str = Field(default="local-player", max_length=80)
+    event: Literal["render_execution_confirmed"]
+    generation: int = Field(ge=0, le=2**31 - 1, strict=True)
+    nonce: str = Field(min_length=1, max_length=64)
+
+
+class RenderTrapTicket(BaseModel):
+    id: str
+    customer: str
+    subject: str
+    priority: str
+    body: str
+
+
+class RenderTrapState(BaseModel):
+    status: str  # "active" | "solved"
+    ticket: RenderTrapTicket
+    max_note_length: int
+    note: str
+    # Raw assistant output; the UI must show it as plain text only.
+    raw_output: str | None = None
+    generation: int
+    # Document for the sandboxed preview frame (never contains the flag).
+    preview_html: str | None = None
+    challenge_solved: bool
+    analysis: SecurityAnalysis | None = None
+
+
+class RenderTrapProofResponse(BaseModel):
+    accepted: bool
+    reason: str | None = None
+    flag: str | None = None
+    state: RenderTrapState
 
 
 ChallengeDetail.model_rebuild()

@@ -208,3 +208,82 @@ export async function releaseRouletteReset(
   });
   return handle<ReleaseRouletteState>(res);
 }
+
+// ---------------------------------------------------------------------------
+// RenderTrap
+// ---------------------------------------------------------------------------
+
+export interface RenderTrapTicket {
+  id: string;
+  customer: string;
+  subject: string;
+  priority: string;
+  body: string;
+}
+
+export interface RenderTrapState {
+  status: string;
+  ticket: RenderTrapTicket;
+  max_note_length: number;
+  note: string;
+  raw_output: string | null;
+  generation: number;
+  preview_html: string | null;
+  challenge_solved: boolean;
+  analysis: SecurityAnalysis | null;
+}
+
+export interface RenderTrapProofResponse {
+  accepted: boolean;
+  reason: string | null;
+  flag: string | null;
+  state: RenderTrapState;
+}
+
+const RT_BASE = `${API_BASE}/api/challenges/render-trap`;
+
+export async function renderTrapState(playerId: string): Promise<RenderTrapState> {
+  const res = await fetch(`${RT_BASE}/state?player_id=${encodeURIComponent(playerId)}`, {
+    cache: "no-store",
+  });
+  return handle<RenderTrapState>(res);
+}
+
+export async function renderTrapSummarize(
+  note: string,
+  playerId: string
+): Promise<RenderTrapState> {
+  const res = await fetch(`${RT_BASE}/summarize`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ note, player_id: playerId }),
+  });
+  return handle<RenderTrapState>(res);
+}
+
+export async function renderTrapProof(
+  generation: number,
+  nonce: string,
+  playerId: string
+): Promise<RenderTrapProofResponse> {
+  const res = await fetch(`${RT_BASE}/proof`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      event: "render_execution_confirmed",
+      generation,
+      nonce,
+      player_id: playerId,
+    }),
+  });
+  return handle<RenderTrapProofResponse>(res);
+}
+
+export async function renderTrapReset(playerId: string): Promise<RenderTrapState> {
+  const res = await fetch(`${RT_BASE}/reset`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ player_id: playerId }),
+  });
+  return handle<RenderTrapState>(res);
+}

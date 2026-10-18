@@ -43,16 +43,18 @@ FastAPI application.
 - `routes/challenges.py` — generic list / detail / submit.
 - `routes/predict.py` — Model Mirror's inference oracle.
 - `routes/release_roulette.py` — Release Roulette chat / state / reset.
+- `routes/render_trap.py` — RenderTrap state / summarize / proof / reset.
 - `services/` — registry, seeding, flag generation, flag store, progress.
 - `challenges/` — isolated per-challenge code (base class + `model_mirror/`,
-  `release_roulette/`).
+  `release_roulette/`, `render_trap/`).
 
 ### Data model (`models/__init__.py`)
 `Challenge`, `Player`, `Submission`, `Solve` (unique per player+challenge), and
 `ChallengeProgress` (the deterministic "unlocked" bridge between meeting the
 in-challenge condition and retrieving the flag). Release Roulette adds two
 challenge-specific tables, `release_roulette_releases` and
-`release_roulette_audit`, both scoped by `player_id`.
+`release_roulette_audit`, both scoped by `player_id`. RenderTrap adds one table, `render_trap_sessions`
+(last output, preview generation, per-generation nonce), also per player.
 
 ## Flag lifecycle (deterministic solve → explicit submit)
 
