@@ -1,0 +1,39 @@
+slug: model-crate
+title: Model Crate
+category: Supply Chain
+owasp: LLM03:2025 — Supply Chain
+difficulty: intermediate
+points: 175
+author: Omar Web3
+
+description: >
+  Northstar AI routes support tickets with a third-party adapter,
+  northstar-ticket-adapter 1.4.2. The package name, version and bundled
+  manifest all look right, yet the artifact sitting in the inventory is marked
+  UNVERIFIED. Investigate what you actually received, compare it against the
+  independent release record, and make the call before anything loads it. All
+  activity is a local, inert simulation.
+
+learning_objectives:
+  - Understand AI supply chain risk (OWASP LLM03:2025) beyond application source code
+  - Trust integrity from an independent release record, never from a filename, version or bundled manifest
+  - Compare a digest computed from received bytes with a separately trusted expected digest
+  - Understand why a digest alone does not prove who published an artifact (provenance and signatures)
+  - Fail closed - never load a component that fails verification
+
+hints:
+  - order: 1
+    cost: 0
+    text: >
+      A familiar filename and version do not prove that a package's contents
+      are authentic.
+  - order: 2
+    cost: 15
+    text: >
+      Which value comes from the trusted release record, and which value is
+      calculated from the artifact you received?
+  - order: 3
+    cost: 30
+    text: >
+      A digest mismatch means the bytes differ from the trusted release. What
+      should a secure deployment do before loading it?

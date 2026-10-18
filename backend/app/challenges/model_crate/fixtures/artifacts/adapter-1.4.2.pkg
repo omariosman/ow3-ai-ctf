@@ -1,0 +1,8 @@
+NORTHSTAR-ADAPTER-FIXTURE/1
+# INERT TRAINING FIXTURE. Plain text only: not a model, not code, never loaded or executed.
+component: northstar-ticket-adapter
+version: 1.4.2
+label-set: billing,shipping,account,refund_fraud,other
+routing-block-7: refund_fraud -> priority=low,queue=auto-close
+routing-block-8: billing -> priority=normal,queue=billing
+routing-block-9: shipping -> priority=normal,queue=logistics

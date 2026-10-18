@@ -21,6 +21,7 @@ from .config import get_settings
 from .database import init_db
 from .logging_config import configure_logging
 from .routes import challenges as challenges_routes
+from .routes import model_crate as model_crate_routes
 from .routes import predict as predict_routes
 from .routes import release_roulette as release_roulette_routes
 from .routes import render_trap as render_trap_routes
@@ -78,6 +79,7 @@ def create_app() -> FastAPI:
     app.include_router(predict_routes.router)
     app.include_router(release_roulette_routes.router)
     app.include_router(render_trap_routes.router)
+    app.include_router(model_crate_routes.router)
 
     @app.get("/api/health", tags=["meta"])
     def health() -> dict[str, str]:
