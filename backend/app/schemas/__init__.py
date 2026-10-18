@@ -180,4 +180,126 @@ class RenderTrapProofResponse(BaseModel):
     state: RenderTrapState
 
 
+# --- Model Crate --------------------------------------------------------
+
+
+class ModelCratePlayerRequest(BaseModel):
+    """Every Model Crate action carries only the player id: no digests, paths,
+    URLs, package names or statuses are ever accepted from the client."""
+
+    model_config = ConfigDict(extra="forbid")
+    player_id: str = Field(default="local-player", max_length=80)
+
+
+class ModelCrateInventory(BaseModel):
+    component: str
+    version: str
+    artifact_id: str
+    publisher: str
+    status: str
+
+
+class ModelCrateTrustedRelease(BaseModel):
+    component: str
+    version: str
+    artifact_id: str
+    expected_sha256: str
+    source_repository: str
+    approved_signers: list[str]
+    signature_required: bool
+    approver: str
+    approved_on: str
+
+
+class ModelCrateAttestation(BaseModel):
+    signer: str
+    source_repository: str
+    signed_sha256: str
+    build_id: str
+
+
+class ModelCratePackageManifest(BaseModel):
+    """Claims shipped inside the received package. Untrusted."""
+
+    name: str
+    version: str
+    artifact_id: str
+    publisher: str
+    claimed_sha256: str
+    attestation: ModelCrateAttestation
+
+
+class ModelCrateArtifactInfo(BaseModel):
+    artifact_id: str
+    size_bytes: int
+    # Computed by the server from the received bytes. Not a trust anchor.
+    actual_sha256: str
+    claimed_version: str
+
+
+class ModelCrateComparison(BaseModel):
+    expected_sha256: str
+    actual_sha256: str
+    claimed_sha256: str
+    digest_match: bool
+    claimed_matches_trusted: bool
+
+
+class ModelCrateProvenanceCheck(BaseModel):
+    name: str
+    passed: bool
+    detail: str
+
+
+class ModelCrateProvenance(BaseModel):
+    simulated: bool = True
+    verified: bool
+    checks: list[ModelCrateProvenanceCheck]
+
+
+class ModelCrateSample(BaseModel):
+    ticket: str
+    label: str
+    expected_route: str
+    actual_route: str
+
+
+class ModelCrateConsequence(BaseModel):
+    tampered: bool
+    summary: str
+    samples: list[ModelCrateSample]
+
+
+class ModelCrateAuditEvent(BaseModel):
+    seq: int
+    event: str
+    detail: str
+
+
+class ModelCrateState(BaseModel):
+    # UNVERIFIED | INSPECTED | MISMATCH_CONFIRMED | QUARANTINED
+    status: str
+    incident: str
+    inventory: ModelCrateInventory
+    trusted_release: ModelCrateTrustedRelease
+    package_manifest: ModelCratePackageManifest
+    # Evidence appears only once the matching action has run server-side.
+    artifact: ModelCrateArtifactInfo | None = None
+    comparison: ModelCrateComparison | None = None
+    provenance: ModelCrateProvenance | None = None
+    loaded: bool = False
+    consequence: ModelCrateConsequence | None = None
+    audit: list[ModelCrateAuditEvent] = Field(default_factory=list)
+    challenge_solved: bool
+    analysis: SecurityAnalysis | None = None
+
+
+class ModelCrateActionResponse(BaseModel):
+    message: str
+    changed: bool
+    # Present only on a valid quarantine, via the normal unlock flow.
+    flag: str | None = None
+    state: ModelCrateState
+
+
 ChallengeDetail.model_rebuild()

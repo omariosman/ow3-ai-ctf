@@ -1,0 +1,12 @@
+{
+  "_comment": "Independent trusted release record (simulated release registry). Authored by the release team; it is NOT derived from the artifact received.",
+  "component": "northstar-ticket-adapter",
+  "version": "1.4.2",
+  "artifact_id": "adapter-1.4.2.pkg",
+  "expected_sha256": "0eceb6c4a1de871c013a2cd551101744fcf0a6562f25225c3d0b0cde0cc7c0cb",
+  "source_repository": "git.northstar.example/ml/ticket-adapter",
+  "approved_signers": ["northstar-release-2025"],
+  "signature_required": true,
+  "approver": "R. Okafor (Release Engineering, fictional)",
+  "approved_on": "2026-02-11"
+}

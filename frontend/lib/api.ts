@@ -287,3 +287,118 @@ export async function renderTrapReset(playerId: string): Promise<RenderTrapState
   });
   return handle<RenderTrapState>(res);
 }
+
+// ---------------------------------------------------------------------------
+// Model Crate
+// ---------------------------------------------------------------------------
+
+export interface ModelCrateTrustedRelease {
+  component: string;
+  version: string;
+  artifact_id: string;
+  expected_sha256: string;
+  source_repository: string;
+  approved_signers: string[];
+  signature_required: boolean;
+  approver: string;
+  approved_on: string;
+}
+
+export interface ModelCratePackageManifest {
+  name: string;
+  version: string;
+  artifact_id: string;
+  publisher: string;
+  claimed_sha256: string;
+  attestation: {
+    signer: string;
+    source_repository: string;
+    signed_sha256: string;
+    build_id: string;
+  };
+}
+
+export interface ModelCrateState {
+  status: "UNVERIFIED" | "INSPECTED" | "MISMATCH_CONFIRMED" | "QUARANTINED";
+  incident: string;
+  inventory: {
+    component: string;
+    version: string;
+    artifact_id: string;
+    publisher: string;
+    status: string;
+  };
+  trusted_release: ModelCrateTrustedRelease;
+  package_manifest: ModelCratePackageManifest;
+  artifact: {
+    artifact_id: string;
+    size_bytes: number;
+    actual_sha256: string;
+    claimed_version: string;
+  } | null;
+  comparison: {
+    expected_sha256: string;
+    actual_sha256: string;
+    claimed_sha256: string;
+    digest_match: boolean;
+    claimed_matches_trusted: boolean;
+  } | null;
+  provenance: {
+    simulated: boolean;
+    verified: boolean;
+    checks: { name: string; passed: boolean; detail: string }[];
+  } | null;
+  loaded: boolean;
+  consequence: {
+    tampered: boolean;
+    summary: string;
+    samples: { ticket: string; label: string; expected_route: string; actual_route: string }[];
+  } | null;
+  audit: { seq: number; event: string; detail: string }[];
+  challenge_solved: boolean;
+  analysis: SecurityAnalysis | null;
+}
+
+export interface ModelCrateActionResponse {
+  message: string;
+  changed: boolean;
+  flag: string | null;
+  state: ModelCrateState;
+}
+
+export type ModelCrateAction =
+  | "inspect"
+  | "compare"
+  | "provenance"
+  | "load"
+  | "quarantine";
+
+const MC_BASE = `${API_BASE}/api/challenges/model-crate`;
+
+export async function modelCrateState(playerId: string): Promise<ModelCrateState> {
+  const res = await fetch(`${MC_BASE}/state?player_id=${encodeURIComponent(playerId)}`, {
+    cache: "no-store",
+  });
+  return handle<ModelCrateState>(res);
+}
+
+export async function modelCrateAction(
+  action: ModelCrateAction,
+  playerId: string
+): Promise<ModelCrateActionResponse> {
+  const res = await fetch(`${MC_BASE}/${action}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ player_id: playerId }),
+  });
+  return handle<ModelCrateActionResponse>(res);
+}
+
+export async function modelCrateReset(playerId: string): Promise<ModelCrateState> {
+  const res = await fetch(`${MC_BASE}/reset`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ player_id: playerId }),
+  });
+  return handle<ModelCrateState>(res);
+}

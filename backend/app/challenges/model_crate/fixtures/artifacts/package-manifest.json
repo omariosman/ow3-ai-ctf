@@ -1,0 +1,14 @@
+{
+  "_comment": "Manifest shipped INSIDE the received package. Untrusted: whoever replaced the artifact controls it.",
+  "name": "northstar-ticket-adapter",
+  "version": "1.4.2",
+  "artifact_id": "adapter-1.4.2.pkg",
+  "publisher": "Northstar AI",
+  "claimed_sha256": "0eceb6c4a1de871c013a2cd551101744fcf0a6562f25225c3d0b0cde0cc7c0cb",
+  "attestation": {
+    "signer": "northstar-release-2025",
+    "source_repository": "git.northstar-mirror.example/ml/ticket-adapter",
+    "signed_sha256": "0eceb6c4a1de871c013a2cd551101744fcf0a6562f25225c3d0b0cde0cc7c0cb",
+    "build_id": "build-88213"
+  }
+}

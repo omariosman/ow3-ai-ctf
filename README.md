@@ -13,6 +13,9 @@ Challenges:
 - **RenderTrap**: an AI ticket summary rendered unsafely in a dashboard preview
   (OWASP LLM05:2025 Improper Output Handling, 150 pts). The vulnerable sink is
   confined to a sandboxed iframe.
+- **Model Crate**: a replaced AI adapter artifact that only looks legitimate
+  (OWASP LLM03:2025 Supply Chain, 175 pts). Inert fixture, hashed and never
+  executed.
 
 - Frontend: Next.js + TypeScript + Tailwind
 - Backend: Python + FastAPI
@@ -145,6 +148,21 @@ the problem statement, solution, remediation, and learning outcomes.
    solve is kept.
 
 No API key or internet needed. See `challenges/render-trap/README.md`.
+
+## How to play Model Crate
+
+1. Read the incident and the release inventory for `northstar-ticket-adapter`.
+2. Compare the **trusted release record** with the manifest bundled in the package.
+3. **Inspect** the artifact (the server hashes the received bytes), then
+   **compare** its digest with the trusted record. Optionally verify provenance.
+4. **Reject / quarantine** the artifact once the evidence supports it. The
+   backend validates the state transition and the response reveals your flag.
+   Submit it for 175 points.
+5. **Reset environment** restores the initial state; your recorded solve is kept.
+
+Everything is an offline simulation: the artifact is a text fixture that is only
+read and hashed, and the provenance check is simulated. See
+`challenges/model-crate/README.md`.
 
 ## Project layout
 

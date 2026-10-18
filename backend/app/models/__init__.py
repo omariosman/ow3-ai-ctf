@@ -177,3 +177,30 @@ class RenderTrapSession(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, default=_utcnow, onupdate=_utcnow
     )
+
+
+# ---------------------------------------------------------------------------
+# Model Crate (challenge-specific, additive table).
+#
+# One row per player: the server-authoritative verification state machine for
+# the received artifact, plus a small audit trail. Clients never write it.
+# ---------------------------------------------------------------------------
+
+
+class ModelCrateSession(Base):
+    __tablename__ = "model_crate_sessions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    player_id: Mapped[str] = mapped_column(String(80), unique=True, index=True)
+    # UNVERIFIED -> INSPECTED -> MISMATCH_CONFIRMED -> QUARANTINED
+    status: Mapped[str] = mapped_column(String(24), default="UNVERIFIED")
+    # None until compared; True/False is the server's digest verdict.
+    digest_match: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    # None until checked; "passed" | "failed".
+    provenance_result: Mapped[str | None] = mapped_column(String(10), nullable=True)
+    loaded: Mapped[bool] = mapped_column(Boolean, default=False)
+    # JSON list of audit events (capped by the state module).
+    audit: Mapped[str] = mapped_column(Text, default="[]")
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=_utcnow, onupdate=_utcnow
+    )
