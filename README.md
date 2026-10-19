@@ -16,6 +16,8 @@ Challenges:
 - **Model Crate**: a replaced AI adapter artifact that only looks legitimate
   (OWASP LLM03:2025 Supply Chain, 175 pts). Inert fixture, hashed and never
   executed.
+- **Context Hijack**: a RAG support assistant steered by an instruction hidden
+  in a retrieved document (OWASP LLM01:2025 Prompt Injection, 150 pts).
 
 - Frontend: Next.js + TypeScript + Tailwind
 - Backend: Python + FastAPI
@@ -148,6 +150,18 @@ the problem statement, solution, remediation, and learning outcomes.
    solve is kept.
 
 No API key or internet needed. See `challenges/render-trap/README.md`.
+
+## How to play Context Hijack
+
+1. Open the challenge and ask HelpDesk Atlas a normal return-policy question.
+2. Compare the answer with the **Retrieved sources** and their trust labels.
+3. Open the retrieved documents in the **Knowledge base** and find the one that
+   does not belong. The server recomputes retrieval and the response; when the
+   injected outcome is verified, the response reveals your flag. Submit it for
+   150 points.
+4. **Reset environment** clears your turn; your recorded solve is kept.
+
+No API key or internet needed. See `challenges/context-hijack/README.md`.
 
 ## How to play Model Crate
 

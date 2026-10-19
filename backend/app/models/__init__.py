@@ -204,3 +204,27 @@ class ModelCrateSession(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, default=_utcnow, onupdate=_utcnow
     )
+
+
+# ---------------------------------------------------------------------------
+# Context Hijack (challenge-specific, additive table).
+#
+# One row per player: the last question, which documents were retrieved, the
+# simulated assistant response and the server's verdict. Clients never write it.
+# ---------------------------------------------------------------------------
+
+
+class ContextHijackSession(Base):
+    __tablename__ = "context_hijack_sessions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    player_id: Mapped[str] = mapped_column(String(80), unique=True, index=True)
+    query: Mapped[str] = mapped_column(Text, default="")
+    # JSON list of retrieved document ids.
+    retrieved: Mapped[str] = mapped_column(Text, default="[]")
+    response: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # True when the last turn met the server-side evidence check.
+    injected: Mapped[bool] = mapped_column(Boolean, default=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=_utcnow, onupdate=_utcnow
+    )

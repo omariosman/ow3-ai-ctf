@@ -402,3 +402,68 @@ export async function modelCrateReset(playerId: string): Promise<ModelCrateState
   });
   return handle<ModelCrateState>(res);
 }
+
+// ---------------------------------------------------------------------------
+// Context Hijack
+// ---------------------------------------------------------------------------
+
+export interface ContextHijackDocument {
+  doc_id: string;
+  title: string;
+  source: string;
+  trusted: boolean;
+  content: string;
+}
+
+export interface ContextHijackSource {
+  doc_id: string;
+  title: string;
+  trusted: boolean;
+}
+
+export interface ContextHijackState {
+  status: string;
+  max_query_length: number;
+  documents: ContextHijackDocument[];
+  query: string;
+  response: string | null;
+  sources: ContextHijackSource[];
+  challenge_solved: boolean;
+  analysis: SecurityAnalysis | null;
+}
+
+export interface ContextHijackAskResponse {
+  solved_condition: boolean;
+  flag: string | null;
+  state: ContextHijackState;
+}
+
+const CH_BASE = `${API_BASE}/api/challenges/context-hijack`;
+
+export async function contextHijackState(playerId: string): Promise<ContextHijackState> {
+  const res = await fetch(`${CH_BASE}/state?player_id=${encodeURIComponent(playerId)}`, {
+    cache: "no-store",
+  });
+  return handle<ContextHijackState>(res);
+}
+
+export async function contextHijackAsk(
+  query: string,
+  playerId: string
+): Promise<ContextHijackAskResponse> {
+  const res = await fetch(`${CH_BASE}/ask`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query, player_id: playerId }),
+  });
+  return handle<ContextHijackAskResponse>(res);
+}
+
+export async function contextHijackReset(playerId: string): Promise<ContextHijackState> {
+  const res = await fetch(`${CH_BASE}/reset`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ player_id: playerId }),
+  });
+  return handle<ContextHijackState>(res);
+}

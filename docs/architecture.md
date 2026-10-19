@@ -44,11 +44,12 @@ FastAPI application.
 - `routes/predict.py` — Model Mirror's inference oracle.
 - `routes/release_roulette.py` — Release Roulette chat / state / reset.
 - `routes/render_trap.py` — RenderTrap state / summarize / proof / reset.
+- `routes/context_hijack.py` — Context Hijack state / ask / reset.
 - `routes/model_crate.py` — Model Crate state / inspect / compare / provenance /
   load / quarantine / reset.
 - `services/` — registry, seeding, flag generation, flag store, progress.
 - `challenges/` — isolated per-challenge code (base class + `model_mirror/`,
-  `release_roulette/`, `render_trap/`, `model_crate/`).
+  `release_roulette/`, `render_trap/`, `model_crate/`, `context_hijack/`).
 
 ### Data model (`models/__init__.py`)
 `Challenge`, `Player`, `Submission`, `Solve` (unique per player+challenge), and
@@ -61,6 +62,8 @@ Model Crate adds `model_crate_sessions` (verification state machine, evidence
 verdicts, audit trail), per player. Its trusted release record and inert
 artifact fixture live in `challenges/model_crate/fixtures/`, and the digest is
 computed server-side from the fixture bytes.
+Context Hijack adds `context_hijack_sessions` (last question, retrieved ids,
+simulated response, verdict), per player; its corpus is static in code.
 
 ## Flag lifecycle (deterministic solve → explicit submit)
 

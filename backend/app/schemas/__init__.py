@@ -180,6 +180,52 @@ class RenderTrapProofResponse(BaseModel):
     state: RenderTrapState
 
 
+# --- Context Hijack -----------------------------------------------------
+
+
+class ContextHijackAskRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    player_id: str = Field(default="local-player", max_length=80)
+    query: str = Field(default="", max_length=300)
+
+
+class ContextHijackPlayerRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    player_id: str = Field(default="local-player", max_length=80)
+
+
+class ContextHijackDocument(BaseModel):
+    doc_id: str
+    title: str
+    source: str
+    trusted: bool
+    content: str
+
+
+class ContextHijackSource(BaseModel):
+    doc_id: str
+    title: str
+    trusted: bool
+
+
+class ContextHijackState(BaseModel):
+    status: str  # "active" | "solved"
+    max_query_length: int
+    documents: list[ContextHijackDocument]
+    query: str
+    response: str | None = None
+    sources: list[ContextHijackSource] = Field(default_factory=list)
+    challenge_solved: bool
+    analysis: SecurityAnalysis | None = None
+
+
+class ContextHijackAskResponse(BaseModel):
+    solved_condition: bool
+    # Present only when the server verified the injected outcome.
+    flag: str | None = None
+    state: ContextHijackState
+
+
 # --- Model Crate --------------------------------------------------------
 
 

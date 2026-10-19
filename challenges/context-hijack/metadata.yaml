@@ -1,0 +1,37 @@
+slug: context-hijack
+title: Context Hijack
+category: Prompt Injection
+owasp: LLM01:2025 — Prompt Injection
+difficulty: intermediate
+points: 150
+author: Omar Web3
+
+description: >
+  HelpDesk Atlas answers customer questions from a small product knowledge
+  base. Its job is to answer from the official support policy, yet a perfectly
+  ordinary question about returns gets a very different answer. Find out why,
+  and recover the challenge flag. All activity is confined to this local
+  training environment.
+
+learning_objectives:
+  - Understand indirect prompt injection (OWASP LLM01:2025) through retrieved documents
+  - Treat retrieved content as untrusted data, not as instructions
+  - Recognise why merging trusted instructions and retrieved text into one context is risky
+  - Know the mitigations (isolation, least privilege, output validation, human approval) and why none is complete alone
+  - Distinguish Prompt Injection from Excessive Agency, Improper Output Handling and Supply Chain issues
+
+hints:
+  - order: 1
+    cost: 0
+    text: >
+      Ask a normal question about returns, then look at which sources were
+      retrieved alongside the answer.
+  - order: 2
+    cost: 15
+    text: >
+      Open each retrieved document. One of them is not first-party content.
+  - order: 3
+    cost: 30
+    text: >
+      The assistant treated text inside a retrieved document as an instruction.
+      A plain question about unopened-item returns is enough to retrieve it.
