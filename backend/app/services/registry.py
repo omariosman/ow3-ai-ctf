@@ -18,6 +18,8 @@ from ..challenges.render_trap import SLUG as RENDER_TRAP_SLUG
 from ..challenges.render_trap import challenge as render_trap
 from ..challenges.trace_leak import SLUG as TRACE_LEAK_SLUG
 from ..challenges.trace_leak import challenge as trace_leak
+from ..challenges.poisoned_memory import SLUG as POISONED_MEMORY_SLUG
+from ..challenges.poisoned_memory import challenge as poisoned_memory
 from ..challenges.release_roulette import SLUG as RELEASE_ROULETTE_SLUG
 from ..challenges.release_roulette import challenge as release_roulette
 
@@ -28,6 +30,7 @@ _REGISTRY: dict[str, Challenge] = {
     MODEL_CRATE_SLUG: model_crate,
     CONTEXT_HIJACK_SLUG: context_hijack,
     TRACE_LEAK_SLUG: trace_leak,
+    POISONED_MEMORY_SLUG: poisoned_memory,
 }
 
 

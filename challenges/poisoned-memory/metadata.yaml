@@ -1,0 +1,38 @@
+slug: poisoned-memory
+title: Poisoned Memory
+category: Data and Model Poisoning
+owasp: LLM04:2025 — Data and Model Poisoning
+difficulty: intermediate
+points: 150
+author: Omar Web3
+
+description: >
+  The Northstar Devices assistant answers product questions from a small
+  catalog of support records. Ask which replacement component is approved for
+  the fictional Northstar Mini, then work out why the answer cannot be trusted.
+  Find the tampered record, submit the evidence and recover the challenge flag.
+  All activity is confined to this local training environment.
+
+learning_objectives:
+  - Understand data poisoning (OWASP LLM04:2025) through corrupted knowledge-base records
+  - Recognise how a ranking or trust score that ignores provenance lets unverified data win
+  - Know the mitigations (provenance and integrity checks, source separation, versioning and audit, fixture tests) and that a checksum does not prove truth
+  - Distinguish poisoned data from Prompt Injection, Supply Chain and System Prompt Leakage
+  - Understand that this simulates poisoned retrieval data, not model-weight or training-time poisoning
+
+hints:
+  - order: 1
+    cost: 0
+    text: >
+      Ask which replacement component is approved for the Northstar Mini, then
+      compare the answer with the ranked records.
+  - order: 2
+    cost: 15
+    text: >
+      Look at each record's source and trust label next to its score. One
+      record ranked first for a reason other than relevance.
+  - order: 3
+    cost: 30
+    text: >
+      Inspect the unverified community record and read its integrity audit
+      note. Submit the marker it contains as evidence.

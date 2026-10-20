@@ -46,11 +46,12 @@ FastAPI application.
 - `routes/render_trap.py` — RenderTrap state / summarize / proof / reset.
 - `routes/context_hijack.py` — Context Hijack state / ask / reset.
 - `routes/trace_leak.py` — Trace Leak state / ask / trace / evidence / reset.
+- `routes/poisoned_memory.py` — Poisoned Memory state / ask / inspect / evidence / reset.
 - `routes/model_crate.py` — Model Crate state / inspect / compare / provenance /
   load / quarantine / reset.
 - `services/` — registry, seeding, flag generation, flag store, progress.
 - `challenges/` — isolated per-challenge code (base class + `model_mirror/`,
-  `release_roulette/`, `render_trap/`, `model_crate/`, `context_hijack/`, `trace_leak/`).
+  `release_roulette/`, `render_trap/`, `model_crate/`, `context_hijack/`, `trace_leak/`, `poisoned_memory/`).
 
 ### Data model (`models/__init__.py`)
 `Challenge`, `Player`, `Submission`, `Solve` (unique per player+challenge), and
@@ -67,6 +68,8 @@ Context Hijack adds `context_hijack_sessions` (last question, retrieved ids,
 simulated response, verdict), per player; its corpus is static in code.
 Trace Leak adds `trace_leak_sessions` (last FAQ turn, whether the trace was
 opened), per player; its prompt and FAQs are static in code.
+Poisoned Memory adds `poisoned_memory_sessions` (last query, ranking, verdict,
+whether the poisoned record was inspected), per player; records are static in code.
 
 ## Flag lifecycle (deterministic solve → explicit submit)
 

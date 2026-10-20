@@ -20,6 +20,9 @@ Challenges:
   in a retrieved document (OWASP LLM01:2025 Prompt Injection, 150 pts).
 - **Trace Leak**: a support assistant whose diagnostic trace exposes its internal
   prompt (OWASP LLM07:2025 System Prompt Leakage, 125 pts).
+- **Poisoned Memory**: a product assistant whose knowledge base holds a tampered
+  record that outranks the manufacturer's (OWASP LLM04:2025 Data and Model
+  Poisoning, 150 pts).
 
 - Frontend: Next.js + TypeScript + Tailwind
 - Backend: Python + FastAPI
@@ -174,6 +177,17 @@ No API key or internet needed. See `challenges/context-hijack/README.md`.
 4. **Reset environment** clears your turn; your recorded solve is kept.
 
 No API key or internet needed. See `challenges/trace-leak/README.md`.
+
+## How to play Poisoned Memory
+
+1. Ask the assistant which replacement component is approved for the Northstar Mini.
+2. Compare the answer with **Retrieved records**: rank, score, source and trust.
+3. Open the suspicious record in the **Record inspector** and find its marker.
+   Submit it as **Evidence**; the server checks the poisoned answer and your
+   inspection, then reveals your flag. Submit it for 150 points.
+4. **Reset environment** clears your turn; your recorded solve is kept.
+
+No API key or internet needed. See `challenges/poisoned-memory/README.md`.
 
 ## How to play Model Crate
 

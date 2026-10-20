@@ -275,6 +275,79 @@ class TraceLeakEvidenceResponse(BaseModel):
     state: TraceLeakState
 
 
+# --- Poisoned Memory ----------------------------------------------------
+
+
+class PoisonedMemoryAskRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    player_id: str = Field(default="local-player", max_length=80)
+    query: str = Field(default="", max_length=200)
+
+
+class PoisonedMemoryPlayerRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    player_id: str = Field(default="local-player", max_length=80)
+
+
+class PoisonedMemoryInspectRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    player_id: str = Field(default="local-player", max_length=80)
+    record_id: str = Field(default="", max_length=80)
+
+
+class PoisonedMemoryEvidenceRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    player_id: str = Field(default="local-player", max_length=80)
+    marker: str = Field(default="", max_length=100)
+
+
+class PoisonedMemoryRecordSummary(BaseModel):
+    record_id: str
+    source: str
+    trust: str
+
+
+class PoisonedMemoryRetrieved(BaseModel):
+    rank: int
+    record_id: str
+    source: str
+    trust: str
+    relevance: int
+    score: int
+
+
+class PoisonedMemoryRecordDetail(BaseModel):
+    record_id: str
+    source: str
+    trust: str
+    integrity: str
+    content: str
+    note: str
+
+
+class PoisonedMemoryState(BaseModel):
+    status: str  # "active" | "solved"
+    max_query_length: int
+    records: list[PoisonedMemoryRecordSummary]
+    query: str
+    response: str | None = None
+    retrieved: list[PoisonedMemoryRetrieved] = Field(default_factory=list)
+    challenge_solved: bool
+    analysis: SecurityAnalysis | None = None
+
+
+class PoisonedMemoryInspectResponse(BaseModel):
+    record: PoisonedMemoryRecordDetail
+    state: PoisonedMemoryState
+
+
+class PoisonedMemoryEvidenceResponse(BaseModel):
+    solved_condition: bool
+    # Present only when the server verified the evidence.
+    flag: str | None = None
+    state: PoisonedMemoryState
+
+
 # --- Model Crate --------------------------------------------------------
 
 

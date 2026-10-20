@@ -250,3 +250,28 @@ class TraceLeakSession(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, default=_utcnow, onupdate=_utcnow
     )
+
+
+# ---------------------------------------------------------------------------
+# Poisoned Memory (challenge-specific, additive table).
+#
+# One row per player: the last question, the ranked records, the simulated
+# answer, the server's poisoning verdict and whether the poisoned record was
+# inspected. Clients never write it.
+# ---------------------------------------------------------------------------
+
+
+class PoisonedMemorySession(Base):
+    __tablename__ = "poisoned_memory_sessions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    player_id: Mapped[str] = mapped_column(String(80), unique=True, index=True)
+    query: Mapped[str] = mapped_column(Text, default="")
+    # JSON list of {rank, record_id, relevance, score}.
+    retrieved: Mapped[str] = mapped_column(Text, default="[]")
+    response: Mapped[str | None] = mapped_column(Text, nullable=True)
+    poisoned: Mapped[bool] = mapped_column(Boolean, default=False)
+    inspected: Mapped[bool] = mapped_column(Boolean, default=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=_utcnow, onupdate=_utcnow
+    )

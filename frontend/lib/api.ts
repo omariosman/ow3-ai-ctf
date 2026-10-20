@@ -533,3 +533,82 @@ export function traceLeakEvidence(
 export function traceLeakReset(playerId: string): Promise<TraceLeakState> {
   return tlPost<TraceLeakState>("reset", { player_id: playerId });
 }
+
+// ---------------------------------------------------------------------------
+// Poisoned Memory
+// ---------------------------------------------------------------------------
+
+export interface PoisonedMemoryRecordSummary {
+  record_id: string;
+  source: string;
+  trust: string;
+}
+
+export interface PoisonedMemoryRetrieved extends PoisonedMemoryRecordSummary {
+  rank: number;
+  relevance: number;
+  score: number;
+}
+
+export interface PoisonedMemoryRecordDetail extends PoisonedMemoryRecordSummary {
+  integrity: string;
+  content: string;
+  note: string;
+}
+
+export interface PoisonedMemoryState {
+  status: string;
+  max_query_length: number;
+  records: PoisonedMemoryRecordSummary[];
+  query: string;
+  response: string | null;
+  retrieved: PoisonedMemoryRetrieved[];
+  challenge_solved: boolean;
+  analysis: SecurityAnalysis | null;
+}
+
+export interface PoisonedMemoryEvidenceResponse {
+  solved_condition: boolean;
+  flag: string | null;
+  state: PoisonedMemoryState;
+}
+
+const PM_BASE = `${API_BASE}/api/challenges/poisoned-memory`;
+
+async function pmPost<T>(path: string, body: Record<string, unknown>): Promise<T> {
+  const res = await fetch(`${PM_BASE}/${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  return handle<T>(res);
+}
+
+export async function poisonedMemoryState(playerId: string): Promise<PoisonedMemoryState> {
+  const res = await fetch(`${PM_BASE}/state?player_id=${encodeURIComponent(playerId)}`, {
+    cache: "no-store",
+  });
+  return handle<PoisonedMemoryState>(res);
+}
+
+export function poisonedMemoryAsk(query: string, playerId: string): Promise<PoisonedMemoryState> {
+  return pmPost<PoisonedMemoryState>("ask", { query, player_id: playerId });
+}
+
+export function poisonedMemoryInspect(
+  recordId: string,
+  playerId: string
+): Promise<{ record: PoisonedMemoryRecordDetail; state: PoisonedMemoryState }> {
+  return pmPost("inspect", { record_id: recordId, player_id: playerId });
+}
+
+export function poisonedMemoryEvidence(
+  marker: string,
+  playerId: string
+): Promise<PoisonedMemoryEvidenceResponse> {
+  return pmPost<PoisonedMemoryEvidenceResponse>("evidence", { marker, player_id: playerId });
+}
+
+export function poisonedMemoryReset(playerId: string): Promise<PoisonedMemoryState> {
+  return pmPost<PoisonedMemoryState>("reset", { player_id: playerId });
+}
