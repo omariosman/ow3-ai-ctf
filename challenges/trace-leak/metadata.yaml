@@ -1,0 +1,38 @@
+slug: trace-leak
+title: Trace Leak
+category: System Prompt Leakage
+owasp: LLM07:2025 — System Prompt Leakage
+difficulty: beginner
+points: 125
+author: Omar Web3
+
+description: >
+  Northstar Support AI answers a couple of product questions. Its developers
+  turned on a verbose request trace to troubleshoot answers. Audit the
+  assistant, inspect what the trace reveals, and submit the evidence to recover
+  the challenge flag. All activity is confined to this local training
+  environment.
+
+learning_objectives:
+  - Understand system prompt leakage (OWASP LLM07:2025) through over-permissive diagnostics
+  - Recognise that prompts can reveal internal logic and must not hold credentials or access control
+  - Prefer allowlisted diagnostic fields over serialising internal state
+  - Know the mitigations (authorization on debug features, redaction, enforcing authorization in code, tests) and that hiding the prompt alone is not a full fix
+  - Distinguish System Prompt Leakage from Prompt Injection, Improper Output Handling and Excessive Agency
+
+hints:
+  - order: 1
+    cost: 0
+    text: >
+      Ask one of the sample questions, then look for a diagnostics action that
+      shows what the application recorded about the request.
+  - order: 2
+    cost: 15
+    text: >
+      Open the request trace. Besides ordinary metadata, look for content that
+      users should never see.
+  - order: 3
+    cost: 30
+    text: >
+      Find the internal review tag in the leaked prompt and submit it as
+      evidence. Typing it before opening the trace does not count.

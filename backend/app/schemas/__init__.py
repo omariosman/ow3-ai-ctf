@@ -226,6 +226,55 @@ class ContextHijackAskResponse(BaseModel):
     state: ContextHijackState
 
 
+# --- Trace Leak ---------------------------------------------------------
+
+
+class TraceLeakAskRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    player_id: str = Field(default="local-player", max_length=80)
+    question: str = Field(default="", max_length=200)
+
+
+class TraceLeakPlayerRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    player_id: str = Field(default="local-player", max_length=80)
+
+
+class TraceLeakEvidenceRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    player_id: str = Field(default="local-player", max_length=80)
+    canary: str = Field(default="", max_length=100)
+
+
+class TraceLeakTrace(BaseModel):
+    request_id: str
+    selected_faq: str | None = None
+    response_mode: str
+    internal_prompt: str
+
+
+class TraceLeakState(BaseModel):
+    status: str  # "active" | "solved"
+    max_question_length: int
+    sample_questions: list[str]
+    question: str
+    response: str | None = None
+    challenge_solved: bool
+    analysis: SecurityAnalysis | None = None
+
+
+class TraceLeakTraceResponse(BaseModel):
+    trace: TraceLeakTrace
+    state: TraceLeakState
+
+
+class TraceLeakEvidenceResponse(BaseModel):
+    solved_condition: bool
+    # Present only when the server verified the evidence.
+    flag: str | None = None
+    state: TraceLeakState
+
+
 # --- Model Crate --------------------------------------------------------
 
 

@@ -18,6 +18,8 @@ Challenges:
   executed.
 - **Context Hijack**: a RAG support assistant steered by an instruction hidden
   in a retrieved document (OWASP LLM01:2025 Prompt Injection, 150 pts).
+- **Trace Leak**: a support assistant whose diagnostic trace exposes its internal
+  prompt (OWASP LLM07:2025 System Prompt Leakage, 125 pts).
 
 - Frontend: Next.js + TypeScript + Tailwind
 - Backend: Python + FastAPI
@@ -162,6 +164,16 @@ No API key or internet needed. See `challenges/render-trap/README.md`.
 4. **Reset environment** clears your turn; your recorded solve is kept.
 
 No API key or internet needed. See `challenges/context-hijack/README.md`.
+
+## How to play Trace Leak
+
+1. Open the challenge and ask Northstar Support AI a sample question.
+2. Click **Request trace** and read the diagnostics, including the internal prompt.
+3. Enter the internal review tag as **Evidence**. The server checks that you
+   opened the trace, then reveals your flag. Submit it for 125 points.
+4. **Reset environment** clears your turn; your recorded solve is kept.
+
+No API key or internet needed. See `challenges/trace-leak/README.md`.
 
 ## How to play Model Crate
 

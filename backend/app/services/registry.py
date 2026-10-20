@@ -16,6 +16,8 @@ from ..challenges.model_mirror import SLUG as MODEL_MIRROR_SLUG
 from ..challenges.model_mirror import challenge as model_mirror
 from ..challenges.render_trap import SLUG as RENDER_TRAP_SLUG
 from ..challenges.render_trap import challenge as render_trap
+from ..challenges.trace_leak import SLUG as TRACE_LEAK_SLUG
+from ..challenges.trace_leak import challenge as trace_leak
 from ..challenges.release_roulette import SLUG as RELEASE_ROULETTE_SLUG
 from ..challenges.release_roulette import challenge as release_roulette
 
@@ -25,6 +27,7 @@ _REGISTRY: dict[str, Challenge] = {
     RENDER_TRAP_SLUG: render_trap,
     MODEL_CRATE_SLUG: model_crate,
     CONTEXT_HIJACK_SLUG: context_hijack,
+    TRACE_LEAK_SLUG: trace_leak,
 }
 
 

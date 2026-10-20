@@ -467,3 +467,69 @@ export async function contextHijackReset(playerId: string): Promise<ContextHijac
   });
   return handle<ContextHijackState>(res);
 }
+
+// ---------------------------------------------------------------------------
+// Trace Leak
+// ---------------------------------------------------------------------------
+
+export interface TraceLeakState {
+  status: string;
+  max_question_length: number;
+  sample_questions: string[];
+  question: string;
+  response: string | null;
+  challenge_solved: boolean;
+  analysis: SecurityAnalysis | null;
+}
+
+export interface TraceLeakTrace {
+  request_id: string;
+  selected_faq: string | null;
+  response_mode: string;
+  internal_prompt: string;
+}
+
+export interface TraceLeakEvidenceResponse {
+  solved_condition: boolean;
+  flag: string | null;
+  state: TraceLeakState;
+}
+
+const TL_BASE = `${API_BASE}/api/challenges/trace-leak`;
+
+async function tlPost<T>(path: string, body: Record<string, unknown>): Promise<T> {
+  const res = await fetch(`${TL_BASE}/${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  return handle<T>(res);
+}
+
+export async function traceLeakState(playerId: string): Promise<TraceLeakState> {
+  const res = await fetch(`${TL_BASE}/state?player_id=${encodeURIComponent(playerId)}`, {
+    cache: "no-store",
+  });
+  return handle<TraceLeakState>(res);
+}
+
+export function traceLeakAsk(question: string, playerId: string): Promise<TraceLeakState> {
+  return tlPost<TraceLeakState>("ask", { question, player_id: playerId });
+}
+
+export function traceLeakTrace(
+  playerId: string
+): Promise<{ trace: TraceLeakTrace; state: TraceLeakState }> {
+  return tlPost("trace", { player_id: playerId });
+}
+
+export function traceLeakEvidence(
+  canary: string,
+  playerId: string
+): Promise<TraceLeakEvidenceResponse> {
+  return tlPost<TraceLeakEvidenceResponse>("evidence", { canary, player_id: playerId });
+}
+
+export function traceLeakReset(playerId: string): Promise<TraceLeakState> {
+  return tlPost<TraceLeakState>("reset", { player_id: playerId });
+}

@@ -228,3 +228,25 @@ class ContextHijackSession(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, default=_utcnow, onupdate=_utcnow
     )
+
+
+# ---------------------------------------------------------------------------
+# Trace Leak (challenge-specific, additive table).
+#
+# One row per player: the last FAQ turn and whether the diagnostic trace was
+# opened (required before the canary evidence counts). Clients never write it.
+# ---------------------------------------------------------------------------
+
+
+class TraceLeakSession(Base):
+    __tablename__ = "trace_leak_sessions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    player_id: Mapped[str] = mapped_column(String(80), unique=True, index=True)
+    question: Mapped[str] = mapped_column(Text, default="")
+    faq_id: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    response: Mapped[str | None] = mapped_column(Text, nullable=True)
+    trace_viewed: Mapped[bool] = mapped_column(Boolean, default=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=_utcnow, onupdate=_utcnow
+    )
