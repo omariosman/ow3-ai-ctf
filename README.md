@@ -29,6 +29,20 @@ Challenges:
   customer's conversation (OWASP LLM02:2025 Sensitive Information Disclosure,
   175 pts).
 
+### Challenge coverage
+
+| Challenge | OWASP ID | Vulnerability |
+|---|---|---|
+| Context Hijack | LLM01:2025 | Prompt Injection |
+| Tenant Zero | LLM02:2025 | Sensitive Information Disclosure |
+| Model Crate | LLM03:2025 | Supply Chain |
+| Poisoned Memory | LLM04:2025 | Data and Model Poisoning |
+| RenderTrap | LLM05:2025 | Improper Output Handling |
+| Release Roulette | LLM06:2025 | Excessive Agency |
+| Trace Leak | LLM07:2025 | System Prompt Leakage |
+| Token Storm | LLM10:2025 | Unbounded Consumption |
+| Model Mirror | — (not a separate 2025 entry) | Model Extraction / Interface Security |
+
 - Frontend: Next.js + TypeScript + Tailwind
 - Backend: Python + FastAPI
 - Database: SQLite (SQLAlchemy ORM)
@@ -245,6 +259,49 @@ challenges/  Per-challenge public metadata + write-ups
 scripts/     seed.py, reset_db.py
 docs/        architecture.md, challenge-authoring.md
 ```
+
+## How to contribute
+
+Contributions are welcome: new challenges, fixes, tests and docs.
+
+1. **Open an issue first** for a new challenge or a larger change, so the idea
+   can be agreed before you build it. Check the table above to avoid duplicating
+   an OWASP vulnerability or a mechanic that already exists. LLM08 (Vector and
+   Embedding Weaknesses) and LLM09 (Misinformation) are still open.
+2. **Fork and branch.** Never work on `main`:
+   ```bash
+   git checkout -b feat/<challenge-slug>-<owasp-id>
+   ```
+3. **Follow the authoring guide.** `docs/challenge-authoring.md` describes the
+   layout. A new challenge adds, and does not change existing code:
+   - `backend/app/challenges/<slug>/` for the simulator and state;
+   - `backend/app/routes/<slug>.py`, registered in `main.py` and `services/registry.py`;
+   - `challenges/<slug>/` with `metadata.yaml`, `README.md`, `author-notes.md`
+     and `solution.md`;
+   - `frontend/app/challenges/<slug>/page.tsx` and its client functions in
+     `frontend/lib/api.ts`;
+   - `backend/tests/test_<slug>.py`.
+4. **Keep to the rules every challenge follows:**
+   - Local and offline: no real LLM, external API, network call or API key.
+   - Deterministic: the solve condition is decided by code on the server,
+     never by an LLM or by the client. The client must not be able to supply a
+     solved flag, a verdict or evidence.
+   - Fictional data only, with no real PII, secrets, products or exploit
+     payloads. Nothing is executed.
+   - The flag stays server-side and never appears in state or metadata.
+   - Existing challenges' IDs, flags, routes, scoring and behavior stay unchanged.
+5. **Test before you open a PR.** Add tests for the intended solve path and for
+   the shortcuts that must fail, then run:
+   ```bash
+   cd backend && python -m pytest
+   cd ../frontend && npx tsc --noEmit && npm run build
+   ```
+   Say in the PR which of these you ran, and anything you could not.
+6. **Open a pull request** against `main`. Describe the vulnerability, the solve
+   path and the fix, and list the files you changed. Keep each PR to one
+   challenge or one fix.
+
+Never commit secrets, `.env` files, the local database or generated flags.
 
 ## Security notes
 
