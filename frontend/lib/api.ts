@@ -612,3 +612,98 @@ export function poisonedMemoryEvidence(
 export function poisonedMemoryReset(playerId: string): Promise<PoisonedMemoryState> {
   return pmPost<PoisonedMemoryState>("reset", { player_id: playerId });
 }
+
+// ---------------------------------------------------------------------------
+// Token Storm
+// ---------------------------------------------------------------------------
+
+export interface TokenStormPolicy {
+  max_input_tokens: number;
+  max_output_tokens: number;
+  max_requests: number;
+  max_total_cost: number;
+  enforcement_enabled: boolean;
+}
+
+export interface TokenStormHistoryItem {
+  n: number | null;
+  input_tokens: number;
+  output_tokens: number;
+  accepted: boolean;
+  message: string;
+  cost: number;
+  charged: number;
+  remaining_budget: number;
+}
+
+export interface TokenStormCheck {
+  name: string;
+  passed: boolean;
+  message: string;
+}
+
+export interface TokenStormState {
+  status: string;
+  initial_budget: number;
+  remaining_budget: number;
+  request_count: number;
+  policy: TokenStormPolicy;
+  history: TokenStormHistoryItem[];
+  abuse_demonstrated: boolean;
+  checks: TokenStormCheck[];
+  hardening_verified: boolean;
+  cost_formula: string;
+  challenge_solved: boolean;
+  analysis: SecurityAnalysis | null;
+}
+
+export interface TokenStormVerifyResponse {
+  solved_condition: boolean;
+  flag: string | null;
+  state: TokenStormState;
+}
+
+const TS_BASE = `${API_BASE}/api/challenges/token-storm`;
+
+async function tsPost<T>(path: string, body: Record<string, unknown>): Promise<T> {
+  const res = await fetch(`${TS_BASE}/${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  return handle<T>(res);
+}
+
+export async function tokenStormState(playerId: string): Promise<TokenStormState> {
+  const res = await fetch(`${TS_BASE}/state?player_id=${encodeURIComponent(playerId)}`, {
+    cache: "no-store",
+  });
+  return handle<TokenStormState>(res);
+}
+
+export function tokenStormRequest(
+  inputTokens: number,
+  outputTokens: number,
+  playerId: string
+): Promise<{ result: TokenStormHistoryItem; state: TokenStormState }> {
+  return tsPost("request", {
+    input_tokens: inputTokens,
+    output_tokens: outputTokens,
+    player_id: playerId,
+  });
+}
+
+export function tokenStormPolicy(
+  policy: TokenStormPolicy,
+  playerId: string
+): Promise<TokenStormState> {
+  return tsPost<TokenStormState>("policy", { ...policy, player_id: playerId });
+}
+
+export function tokenStormVerify(playerId: string): Promise<TokenStormVerifyResponse> {
+  return tsPost<TokenStormVerifyResponse>("verify", { player_id: playerId });
+}
+
+export function tokenStormReset(playerId: string): Promise<TokenStormState> {
+  return tsPost<TokenStormState>("reset", { player_id: playerId });
+}

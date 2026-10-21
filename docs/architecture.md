@@ -47,11 +47,12 @@ FastAPI application.
 - `routes/context_hijack.py` — Context Hijack state / ask / reset.
 - `routes/trace_leak.py` — Trace Leak state / ask / trace / evidence / reset.
 - `routes/poisoned_memory.py` — Poisoned Memory state / ask / inspect / evidence / reset.
+- `routes/token_storm.py` — Token Storm state / request / policy / verify / reset.
 - `routes/model_crate.py` — Model Crate state / inspect / compare / provenance /
   load / quarantine / reset.
 - `services/` — registry, seeding, flag generation, flag store, progress.
 - `challenges/` — isolated per-challenge code (base class + `model_mirror/`,
-  `release_roulette/`, `render_trap/`, `model_crate/`, `context_hijack/`, `trace_leak/`, `poisoned_memory/`).
+  `release_roulette/`, `render_trap/`, `model_crate/`, `context_hijack/`, `trace_leak/`, `poisoned_memory/`, `token_storm/`).
 
 ### Data model (`models/__init__.py`)
 `Challenge`, `Player`, `Submission`, `Solve` (unique per player+challenge), and
@@ -70,6 +71,8 @@ Trace Leak adds `trace_leak_sessions` (last FAQ turn, whether the trace was
 opened), per player; its prompt and FAQs are static in code.
 Poisoned Memory adds `poisoned_memory_sessions` (last query, ranking, verdict,
 whether the poisoned record was inspected), per player; records are static in code.
+Token Storm adds `token_storm_sessions` (simulated ledger, policy, abuse evidence,
+last verification), per player; the simulator is pure and holds no global state.
 
 ## Flag lifecycle (deterministic solve → explicit submit)
 

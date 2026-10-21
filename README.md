@@ -23,6 +23,8 @@ Challenges:
 - **Poisoned Memory**: a product assistant whose knowledge base holds a tampered
   record that outranks the manufacturer's (OWASP LLM04:2025 Data and Model
   Poisoning, 150 pts).
+- **Token Storm**: a simulated inference gateway with no resource limits that
+  drains its budget (OWASP LLM10:2025 Unbounded Consumption, 150 pts).
 
 - Frontend: Next.js + TypeScript + Tailwind
 - Backend: Python + FastAPI
@@ -188,6 +190,19 @@ No API key or internet needed. See `challenges/trace-leak/README.md`.
 4. **Reset environment** clears your turn; your recorded solve is kept.
 
 No API key or internet needed. See `challenges/poisoned-memory/README.md`.
+
+## How to play Token Storm
+
+1. Send the `large-input` preset twice and watch the simulated budget drain.
+2. In the **Policy editor**, enable enforcement and set input, output, quota and
+   budget limits that still allow a normal request. Apply the policy.
+3. Click **Verify hardening**. The server tests abusive and normal requests on a
+   separate simulated ledger; when all pass it reveals your flag. Submit it for
+   150 points.
+4. **Reset environment** clears Token Storm only; your recorded solve is kept.
+
+No API key or internet needed, and no real load is generated. See
+`challenges/token-storm/README.md`.
 
 ## How to play Model Crate
 
