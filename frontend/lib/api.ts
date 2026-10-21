@@ -707,3 +707,108 @@ export function tokenStormVerify(playerId: string): Promise<TokenStormVerifyResp
 export function tokenStormReset(playerId: string): Promise<TokenStormState> {
   return tsPost<TokenStormState>("reset", { player_id: playerId });
 }
+
+// ---------------------------------------------------------------------------
+// Tenant Zero
+// ---------------------------------------------------------------------------
+
+export interface TenantZeroPolicy {
+  enforce_ownership: boolean;
+  scope_search_to_tenant: boolean;
+  redact_sensitive_fields: boolean;
+  enforcement_enabled: boolean;
+}
+
+export interface TenantZeroCheck {
+  name: string;
+  passed: boolean;
+  message: string;
+}
+
+export interface TenantZeroState {
+  status: string;
+  tenant_name: string;
+  own_conversations: { conv_id: string; subject: string }[];
+  policy: TenantZeroPolicy;
+  leak_demonstrated: boolean;
+  checks: TenantZeroCheck[];
+  hardening_verified: boolean;
+  max_query_length: number;
+  challenge_solved: boolean;
+  analysis: SecurityAnalysis | null;
+}
+
+export interface TenantZeroOpenResponse {
+  allowed: boolean;
+  message: string;
+  conversation: Record<string, unknown> | null;
+  state: TenantZeroState;
+}
+
+export interface TenantZeroSearchResult {
+  conv_id: string;
+  tenant: string;
+  tenant_name: string;
+  subject: string;
+  snippet: string;
+}
+
+export interface TenantZeroVerifyResponse {
+  solved_condition: boolean;
+  flag: string | null;
+  state: TenantZeroState;
+}
+
+const TZ_BASE = `${API_BASE}/api/challenges/tenant-zero`;
+
+async function tzPost<T>(path: string, body: Record<string, unknown>): Promise<T> {
+  const res = await fetch(`${TZ_BASE}/${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  return handle<T>(res);
+}
+
+export async function tenantZeroState(playerId: string): Promise<TenantZeroState> {
+  const res = await fetch(`${TZ_BASE}/state?player_id=${encodeURIComponent(playerId)}`, {
+    cache: "no-store",
+  });
+  return handle<TenantZeroState>(res);
+}
+
+export function tenantZeroOpen(
+  conversationId: string,
+  playerId: string
+): Promise<TenantZeroOpenResponse> {
+  return tzPost("open", { conversation_id: conversationId, player_id: playerId });
+}
+
+export function tenantZeroSummary(
+  conversationId: string,
+  playerId: string
+): Promise<TenantZeroOpenResponse> {
+  return tzPost("summary", { conversation_id: conversationId, player_id: playerId });
+}
+
+export function tenantZeroSearch(
+  query: string,
+  playerId: string
+): Promise<{ results: TenantZeroSearchResult[]; state: TenantZeroState }> {
+  return tzPost("search", { query, player_id: playerId });
+}
+
+export function tenantZeroPolicy(
+  policy: TenantZeroPolicy,
+  playerId: string
+): Promise<TenantZeroState> {
+  return tzPost<TenantZeroState>("policy", { ...policy, player_id: playerId });
+}
+
+export function tenantZeroVerify(playerId: string): Promise<TenantZeroVerifyResponse> {
+  return tzPost<TenantZeroVerifyResponse>("verify", { player_id: playerId });
+}
+
+export function tenantZeroReset(playerId: string): Promise<TenantZeroState> {
+  return tzPost<TenantZeroState>("reset", { player_id: playerId });
+}

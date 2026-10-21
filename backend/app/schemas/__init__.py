@@ -420,6 +420,81 @@ class TokenStormVerifyResponse(BaseModel):
     state: TokenStormState
 
 
+# --- Tenant Zero --------------------------------------------------------
+
+
+class TenantZeroPlayerRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    player_id: str = Field(default="local-player", max_length=80)
+
+
+class TenantZeroConversationRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    player_id: str = Field(default="local-player", max_length=80)
+    conversation_id: str = Field(pattern=r"^conv-[0-9]{4}$", max_length=9)
+
+
+class TenantZeroSearchRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    player_id: str = Field(default="local-player", max_length=80)
+    query: str = Field(default="", max_length=60)
+
+
+class TenantZeroPolicy(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    enforce_ownership: StrictBool
+    scope_search_to_tenant: StrictBool
+    redact_sensitive_fields: StrictBool
+    enforcement_enabled: StrictBool
+
+
+class TenantZeroPolicyRequest(TenantZeroPolicy):
+    player_id: str = Field(default="local-player", max_length=80)
+
+
+class TenantZeroConversationSummary(BaseModel):
+    conv_id: str
+    subject: str
+
+
+class TenantZeroCheck(BaseModel):
+    name: str
+    passed: bool
+    message: str
+
+
+class TenantZeroState(BaseModel):
+    status: str  # "active" | "solved"
+    tenant_name: str
+    own_conversations: list[TenantZeroConversationSummary]
+    policy: TenantZeroPolicy
+    leak_demonstrated: bool
+    checks: list[TenantZeroCheck]
+    hardening_verified: bool
+    max_query_length: int
+    challenge_solved: bool
+    analysis: SecurityAnalysis | None = None
+
+
+class TenantZeroOpenResponse(BaseModel):
+    allowed: bool
+    message: str
+    conversation: dict | None = None
+    state: TenantZeroState
+
+
+class TenantZeroSearchResponse(BaseModel):
+    results: list[dict]
+    state: TenantZeroState
+
+
+class TenantZeroVerifyResponse(BaseModel):
+    solved_condition: bool
+    # Present only when the server verified the hardened policy.
+    flag: str | None = None
+    state: TenantZeroState
+
+
 # --- Model Crate --------------------------------------------------------
 
 
