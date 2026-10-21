@@ -3,7 +3,7 @@
 ## Solution
 1. Ask: `Which replacement component is approved for the Northstar Mini?`
 2. The answer is `NM-RED-9`; the unverified Community Tips Archive record ranks
-   first (score 70) above the manufacturer manual (score 20).
+   first (i.e: score 80) above the manufacturer manual (i.e: score 20).
 3. Inspect `community_northstar_mini_edit` and read `POISON_RECORD_4C91`.
 4. Submit the marker as evidence; the server reveals the flag. Submit it.
 
