@@ -1,0 +1,36 @@
+slug: token-storm
+title: Token Storm
+category: Unbounded Consumption
+owasp: LLM10:2025 — Unbounded Consumption
+difficulty: intermediate
+points: 150
+author: Omar Web3
+
+description: >
+  TokenTown's inference gateway is consuming its monthly AI budget far faster
+  than expected. Reproduce the failure safely, identify the missing resource
+  controls, and harden the gateway without breaking normal support requests.
+  This lab uses a fictional budget and simulated requests only.
+
+learning_objectives:
+  - Understand unbounded consumption (OWASP LLM10:2025) through oversized input, excessive output and repeated requests
+  - Apply layered controls - input limits, output caps, quotas and a budget ceiling - at the gateway boundary
+  - Know that prompt instructions are not a substitute for enforcement and that real systems also need timeouts and monitoring
+  - Verify that legitimate requests still succeed after hardening
+  - Distinguish Unbounded Consumption from Excessive Agency and Model Extraction
+
+hints:
+  - order: 1
+    cost: 0
+    text: >
+      Inspect the request dimensions and the gateway's current policy.
+  - order: 2
+    cost: 15
+    text: >
+      Consider both the size of a single request and the cumulative effect of
+      repeated requests.
+  - order: 3
+    cost: 30
+    text: >
+      Cap input and output, enforce a quota or budget ceiling, and verify that
+      a normal request still works.

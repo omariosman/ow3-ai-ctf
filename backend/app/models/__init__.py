@@ -275,3 +275,30 @@ class PoisonedMemorySession(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, default=_utcnow, onupdate=_utcnow
     )
+
+
+# ---------------------------------------------------------------------------
+# Token Storm (challenge-specific, additive table).
+#
+# One row per player: the simulated gateway ledger, active policy, abuse
+# evidence and the last verification run. Clients never write it.
+# ---------------------------------------------------------------------------
+
+
+class TokenStormSession(Base):
+    __tablename__ = "token_storm_sessions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    player_id: Mapped[str] = mapped_column(String(80), unique=True, index=True)
+    policy: Mapped[str] = mapped_column(Text, default='{"max_input_tokens": 100000, "max_output_tokens": 100000, "max_requests": 1000, "max_total_cost": 100, "enforcement_enabled": false}')
+    remaining_budget: Mapped[int] = mapped_column(Integer, default=100)
+    request_count: Mapped[int] = mapped_column(Integer, default=0)
+    # JSON list of recent request outcomes (bounded).
+    history: Mapped[str] = mapped_column(Text, default="[]")
+    abuse_demonstrated: Mapped[bool] = mapped_column(Boolean, default=False)
+    # JSON list of the last verification checks.
+    checks: Mapped[str] = mapped_column(Text, default="[]")
+    verified: Mapped[bool] = mapped_column(Boolean, default=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=_utcnow, onupdate=_utcnow
+    )

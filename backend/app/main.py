@@ -24,6 +24,7 @@ from .routes import challenges as challenges_routes
 from .routes import context_hijack as context_hijack_routes
 from .routes import model_crate as model_crate_routes
 from .routes import predict as predict_routes
+from .routes import token_storm as token_storm_routes
 from .routes import trace_leak as trace_leak_routes
 from .routes import poisoned_memory as poisoned_memory_routes
 from .routes import release_roulette as release_roulette_routes
@@ -86,6 +87,7 @@ def create_app() -> FastAPI:
     app.include_router(context_hijack_routes.router)
     app.include_router(trace_leak_routes.router)
     app.include_router(poisoned_memory_routes.router)
+    app.include_router(token_storm_routes.router)
 
     @app.get("/api/health", tags=["meta"])
     def health() -> dict[str, str]:

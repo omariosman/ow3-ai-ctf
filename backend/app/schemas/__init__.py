@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt
 
 
 class ChallengeSummary(BaseModel):
@@ -346,6 +346,78 @@ class PoisonedMemoryEvidenceResponse(BaseModel):
     # Present only when the server verified the evidence.
     flag: str | None = None
     state: PoisonedMemoryState
+
+
+# --- Token Storm --------------------------------------------------------
+
+
+class TokenStormPlayerRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    player_id: str = Field(default="local-player", max_length=80)
+
+
+class TokenStormRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    player_id: str = Field(default="local-player", max_length=80)
+    input_tokens: StrictInt = Field(ge=0, le=100000)
+    output_tokens: StrictInt = Field(ge=0, le=100000)
+
+
+class TokenStormPolicy(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    max_input_tokens: StrictInt = Field(ge=1, le=100000)
+    max_output_tokens: StrictInt = Field(ge=1, le=100000)
+    max_requests: StrictInt = Field(ge=1, le=1000)
+    max_total_cost: StrictInt = Field(ge=1, le=100)
+    enforcement_enabled: StrictBool
+
+
+class TokenStormPolicyRequest(TokenStormPolicy):
+    player_id: str = Field(default="local-player", max_length=80)
+
+
+class TokenStormHistoryItem(BaseModel):
+    n: int | None = None
+    input_tokens: int
+    output_tokens: int
+    accepted: bool
+    message: str
+    cost: int
+    charged: int
+    remaining_budget: int
+
+
+class TokenStormCheck(BaseModel):
+    name: str
+    passed: bool
+    message: str
+
+
+class TokenStormState(BaseModel):
+    status: str  # "active" | "solved"
+    initial_budget: int
+    remaining_budget: int
+    request_count: int
+    policy: TokenStormPolicy
+    history: list[TokenStormHistoryItem]
+    abuse_demonstrated: bool
+    checks: list[TokenStormCheck]
+    hardening_verified: bool
+    cost_formula: str
+    challenge_solved: bool
+    analysis: SecurityAnalysis | None = None
+
+
+class TokenStormRequestResponse(BaseModel):
+    result: TokenStormHistoryItem
+    state: TokenStormState
+
+
+class TokenStormVerifyResponse(BaseModel):
+    solved_condition: bool
+    # Present only when the server verified the hardened gateway.
+    flag: str | None = None
+    state: TokenStormState
 
 
 # --- Model Crate --------------------------------------------------------
