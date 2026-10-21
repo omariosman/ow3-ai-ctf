@@ -1,0 +1,38 @@
+slug: tenant-zero
+title: Tenant Zero
+category: Sensitive Information Disclosure
+owasp: LLM02:2025 — Sensitive Information Disclosure
+difficulty: intermediate
+points: 175
+author: Omar Web3
+
+description: >
+  Northstar Cloud's Support Copilot keeps every customer's past support
+  conversations. A customer reports seeing a conversation that is not theirs.
+  Reproduce the leak safely, find the missing access controls, and harden the
+  service without locking customers out of their own history. All data is
+  fictional.
+
+learning_objectives:
+  - Understand sensitive information disclosure (OWASP LLM02:2025) caused by missing authorization and tenant scoping
+  - Apply object-level authorization, tenant-scoped retrieval and redaction on the server
+  - Know that telling an assistant not to share data, or relying on hard-to-guess ids, is not access control
+  - Verify that legitimate access still works after hardening
+  - Distinguish this from System Prompt Leakage, Prompt Injection and Data Poisoning
+
+hints:
+  - order: 1
+    cost: 0
+    text: >
+      Look at which tenant owns each conversation you can open, and which ones
+      you can reach.
+  - order: 2
+    cost: 15
+    text: >
+      The viewer takes an id. What does the server check before returning it?
+      Does search check anything?
+  - order: 3
+    cost: 30
+    text: >
+      Enforce ownership and tenant scoping on the server, mask sensitive
+      fields, turn enforcement on, and confirm your own conversations still open.

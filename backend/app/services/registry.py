@@ -16,6 +16,8 @@ from ..challenges.model_mirror import SLUG as MODEL_MIRROR_SLUG
 from ..challenges.model_mirror import challenge as model_mirror
 from ..challenges.render_trap import SLUG as RENDER_TRAP_SLUG
 from ..challenges.render_trap import challenge as render_trap
+from ..challenges.tenant_zero import SLUG as TENANT_ZERO_SLUG
+from ..challenges.tenant_zero import challenge as tenant_zero
 from ..challenges.token_storm import SLUG as TOKEN_STORM_SLUG
 from ..challenges.token_storm import challenge as token_storm
 from ..challenges.trace_leak import SLUG as TRACE_LEAK_SLUG
@@ -34,6 +36,7 @@ _REGISTRY: dict[str, Challenge] = {
     TRACE_LEAK_SLUG: trace_leak,
     POISONED_MEMORY_SLUG: poisoned_memory,
     TOKEN_STORM_SLUG: token_storm,
+    TENANT_ZERO_SLUG: tenant_zero,
 }
 
 

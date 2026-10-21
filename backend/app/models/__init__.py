@@ -302,3 +302,26 @@ class TokenStormSession(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, default=_utcnow, onupdate=_utcnow
     )
+
+
+# ---------------------------------------------------------------------------
+# Tenant Zero (challenge-specific, additive table).
+#
+# One row per player: the access policy, whether a real cross-tenant leak was
+# recorded, and the last verification run. Clients never write it.
+# ---------------------------------------------------------------------------
+
+
+class TenantZeroSession(Base):
+    __tablename__ = "tenant_zero_sessions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    player_id: Mapped[str] = mapped_column(String(80), unique=True, index=True)
+    policy: Mapped[str] = mapped_column(Text, default='{"enforce_ownership": false, "scope_search_to_tenant": false, "redact_sensitive_fields": false, "enforcement_enabled": false}')
+    leak_demonstrated: Mapped[bool] = mapped_column(Boolean, default=False)
+    # JSON list of the last verification checks.
+    checks: Mapped[str] = mapped_column(Text, default="[]")
+    verified: Mapped[bool] = mapped_column(Boolean, default=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=_utcnow, onupdate=_utcnow
+    )

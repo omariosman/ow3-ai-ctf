@@ -25,6 +25,9 @@ Challenges:
   Poisoning, 150 pts).
 - **Token Storm**: a simulated inference gateway with no resource limits that
   drains its budget (OWASP LLM10:2025 Unbounded Consumption, 150 pts).
+- **Tenant Zero**: a multi-tenant support assistant that exposes another
+  customer's conversation (OWASP LLM02:2025 Sensitive Information Disclosure,
+  175 pts).
 
 - Frontend: Next.js + TypeScript + Tailwind
 - Backend: Python + FastAPI
@@ -203,6 +206,20 @@ No API key or internet needed. See `challenges/poisoned-memory/README.md`.
 
 No API key or internet needed, and no real load is generated. See
 `challenges/token-storm/README.md`.
+
+## How to play Tenant Zero
+
+1. You are fictional Tenant Alpha. Open `conv-2001` (not yours) or search for
+   "contract" and see another tenant's data. The server records the leak.
+2. In the **Access policy editor**, enable ownership enforcement, tenant-scoped
+   search, redaction and the master switch. Apply the policy.
+3. Click **Verify hardening**. The server checks that other tenants are blocked,
+   fields are masked and your own history still works, then reveals your flag.
+   Submit it for 175 points.
+4. **Reset environment** clears Tenant Zero only; your recorded solve is kept.
+
+No API key or internet needed; all data is fictional. See
+`challenges/tenant-zero/README.md`.
 
 ## How to play Model Crate
 
