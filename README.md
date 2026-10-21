@@ -41,7 +41,7 @@ Challenges:
 | Release Roulette | LLM06:2025 | Excessive Agency |
 | Trace Leak | LLM07:2025 | System Prompt Leakage |
 | Token Storm | LLM10:2025 | Unbounded Consumption |
-| Model Mirror | — (not a separate 2025 entry) | Model Extraction / Interface Security |
+| Model Mirror | LLM10:2025 | Model Extraction / Interface Security |
 
 - Frontend: Next.js + TypeScript + Tailwind
 - Backend: Python + FastAPI
